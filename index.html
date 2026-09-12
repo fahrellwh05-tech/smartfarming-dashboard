@@ -17,7 +17,6 @@
         href="style.css"
     >
 
-    <!-- MQTT JS -->
     <script
         src="https://unpkg.com/mqtt/dist/mqtt.min.js">
     </script>
@@ -103,9 +102,8 @@
 
         <p class="description">
 
-            Pantau kondisi lahan dan sistem irigasi
-            secara langsung melalui koneksi
-            LoRa dan MQTT.
+            Pantau kondisi lingkungan secara langsung
+            melalui koneksi LoRa dan MQTT.
 
         </p>
 
@@ -138,60 +136,18 @@
 
 <!-- =====================================================
      SENSOR CARDS
+     HANYA DATA YANG ADA
 ===================================================== -->
 
-<section class="sensor-grid">
+<section
+    class="sensor-grid"
+    style="grid-template-columns: repeat(3, 1fr);"
+>
 
 
-    <!-- ================= SOIL ================= -->
-
-    <div class="sensor-card">
-
-        <div class="sensor-top">
-
-            <div class="sensor-icon soil">
-                💧
-            </div>
-
-            <span class="sensor-label">
-                SOIL MOISTURE
-            </span>
-
-        </div>
-
-
-        <div class="sensor-value">
-
-            <span id="soil">
-                --
-            </span>
-
-            <small>
-                %
-            </small>
-
-        </div>
-
-
-        <div class="progress">
-
-            <div
-                id="soilBar"
-                style="width: 0%;">
-            </div>
-
-        </div>
-
-
-        <p id="soilStatus">
-            Menunggu data...
-        </p>
-
-    </div>
-
-
-
-    <!-- ================= TEMPERATURE ================= -->
+    <!-- =================================================
+         SUHU
+    ================================================== -->
 
     <div class="sensor-card">
 
@@ -202,7 +158,7 @@
             </div>
 
             <span class="sensor-label">
-                TEMPERATURE
+                SUHU
             </span>
 
         </div>
@@ -229,45 +185,9 @@
 
 
 
-    <!-- ================= HUMIDITY ================= -->
-
-    <div class="sensor-card">
-
-        <div class="sensor-top">
-
-            <div class="sensor-icon humidity">
-                💦
-            </div>
-
-            <span class="sensor-label">
-                AIR HUMIDITY
-            </span>
-
-        </div>
-
-
-        <div class="sensor-value">
-
-            <span id="humidity">
-                --
-            </span>
-
-            <small>
-                %
-            </small>
-
-        </div>
-
-
-        <p class="sensor-info">
-            Kelembapan udara
-        </p>
-
-    </div>
-
-
-
-    <!-- ================= PRESSURE ================= -->
+    <!-- =================================================
+         TEKANAN
+    ================================================== -->
 
     <div class="sensor-card">
 
@@ -278,7 +198,7 @@
             </div>
 
             <span class="sensor-label">
-                AIR PRESSURE
+                TEKANAN
             </span>
 
         </div>
@@ -305,33 +225,40 @@
 
 
 
-    <!-- ================= PUMP ================= -->
+    <!-- =================================================
+         RH
+    ================================================== -->
 
-    <div class="sensor-card pump-card">
+    <div class="sensor-card">
 
         <div class="sensor-top">
 
-            <div class="sensor-icon pump">
-                🚰
+            <div class="sensor-icon humidity">
+                💦
             </div>
 
             <span class="sensor-label">
-                WATER PUMP
+                RH
             </span>
 
         </div>
 
 
-        <div
-            id="pumpStatus"
-            class="pump-status off"
-        >
-            OFF
+        <div class="sensor-value">
+
+            <span id="humidity">
+                --
+            </span>
+
+            <small>
+                %
+            </small>
+
         </div>
 
 
-        <p id="pumpDescription">
-            Pompa tidak aktif
+        <p class="sensor-info">
+            Kelembapan relatif
         </p>
 
     </div>
@@ -342,7 +269,7 @@
 
 
 <!-- =====================================================
-     DATA REAL TIME
+     DATA LORA
 ===================================================== -->
 
 <section class="data-section">
@@ -363,7 +290,6 @@
         </div>
 
 
-        <!-- PENTING: class live-indicator -->
         <div
             class="live-indicator"
             id="liveIndicator"
@@ -432,7 +358,7 @@
 
 
 
-        <!-- STATUS DATA -->
+        <!-- STATUS -->
 
         <div class="data-row">
 
@@ -474,10 +400,6 @@
 </footer>
 
 
-
-<!-- =====================================================
-     SCRIPT MQTT
-===================================================== -->
 
 <script src="script.js"></script>
 
