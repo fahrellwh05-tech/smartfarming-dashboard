@@ -17,9 +17,8 @@
         href="style.css"
     >
 
-    <script
-        src="https://unpkg.com/mqtt/dist/mqtt.min.js">
-    </script>
+    <!-- MQTT -->
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
 </head>
 
@@ -27,9 +26,7 @@
 <body>
 
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
+<!-- ================= HEADER ================= -->
 
 <header>
 
@@ -41,13 +38,9 @@
 
         <div>
 
-            <h1>
-                SMART FARMING
-            </h1>
+            <h1>SMART FARMING</h1>
 
-            <p>
-                IoT Monitoring System
-            </p>
+            <p>IoT Monitoring System</p>
 
         </div>
 
@@ -76,316 +69,281 @@
 
 
 
-<!-- =====================================================
-     MAIN
-===================================================== -->
+<!-- ================= MAIN ================= -->
 
 <main>
 
 
-<!-- =====================================================
-     WELCOME
-===================================================== -->
+    <!-- WELCOME -->
 
-<section class="welcome">
-
-    <div>
-
-        <p class="small-title">
-            SMART AGRICULTURE
-        </p>
-
-        <h2>
-            Monitoring Tanaman
-            <span>Real-Time</span>
-        </h2>
-
-        <p class="description">
-
-            Pantau kondisi lingkungan secara langsung
-            melalui koneksi LoRa dan MQTT.
-
-        </p>
-
-    </div>
-
-
-    <div class="connection-card">
-
-        <div class="connection-icon">
-            📡
-        </div>
-
-        <div>
-
-            <span>
-                Koneksi Sistem
-            </span>
-
-            <strong id="connectionText">
-                Menghubungkan...
-            </strong>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =====================================================
-     SENSOR CARDS
-     HANYA DATA YANG ADA
-===================================================== -->
-
-<section
-    class="sensor-grid"
-    style="grid-template-columns: repeat(3, 1fr);"
->
-
-
-    <!-- =================================================
-         SUHU
-    ================================================== -->
-
-    <div class="sensor-card">
-
-        <div class="sensor-top">
-
-            <div class="sensor-icon temperature">
-                🌡️
-            </div>
-
-            <span class="sensor-label">
-                SUHU
-            </span>
-
-        </div>
-
-
-        <div class="sensor-value">
-
-            <span id="temperature">
-                --
-            </span>
-
-            <small>
-                °C
-            </small>
-
-        </div>
-
-
-        <p class="sensor-info">
-            Suhu lingkungan
-        </p>
-
-    </div>
-
-
-
-    <!-- =================================================
-         TEKANAN
-    ================================================== -->
-
-    <div class="sensor-card">
-
-        <div class="sensor-top">
-
-            <div class="sensor-icon">
-                🌪️
-            </div>
-
-            <span class="sensor-label">
-                TEKANAN
-            </span>
-
-        </div>
-
-
-        <div class="sensor-value">
-
-            <span id="pressure">
-                --
-            </span>
-
-            <small>
-                hPa
-            </small>
-
-        </div>
-
-
-        <p class="sensor-info">
-            Tekanan udara
-        </p>
-
-    </div>
-
-
-
-    <!-- =================================================
-         RH
-    ================================================== -->
-
-    <div class="sensor-card">
-
-        <div class="sensor-top">
-
-            <div class="sensor-icon humidity">
-                💦
-            </div>
-
-            <span class="sensor-label">
-                RH
-            </span>
-
-        </div>
-
-
-        <div class="sensor-value">
-
-            <span id="humidity">
-                --
-            </span>
-
-            <small>
-                %
-            </small>
-
-        </div>
-
-
-        <p class="sensor-info">
-            Kelembapan relatif
-        </p>
-
-    </div>
-
-
-</section>
-
-
-
-<!-- =====================================================
-     DATA LORA
-===================================================== -->
-
-<section class="data-section">
-
-
-    <div class="section-title">
+    <section class="welcome">
 
         <div>
 
             <p class="small-title">
-                COMMUNICATION
+                SMART AGRICULTURE
             </p>
 
-            <h3>
-                Data LoRa
-            </h3>
+            <h2>
+                Monitoring Tanaman
+                <span>Real-Time</span>
+            </h2>
+
+            <p class="description">
+
+                Pantau kondisi lingkungan secara langsung
+                melalui koneksi LoRa dan MQTT.
+
+            </p>
 
         </div>
 
 
-        <div
-            class="live-indicator"
-            id="liveIndicator"
-        >
+        <div class="connection-card">
 
-            <span></span>
+            <div class="connection-icon">
+                📡
+            </div>
 
-            <strong id="liveText">
-                LIVE
-            </strong>
+            <div>
 
-        </div>
+                <span>
+                    Koneksi Sistem
+                </span>
 
-    </div>
+                <strong id="connectionText">
+                    Menghubungkan...
+                </strong>
 
-
-
-    <div class="data-panel">
-
-
-        <!-- TOPIC -->
-
-        <div class="data-row">
-
-            <span>
-                TOPIC
-            </span>
-
-            <strong>
-                smartfarming/lora/data
-            </strong>
+            </div>
 
         </div>
 
-
-
-        <!-- DATA TERBARU -->
-
-        <div class="data-row">
-
-            <span>
-                DATA TERBARU
-            </span>
-
-            <strong id="data">
-                Menunggu data dari ESP32...
-            </strong>
-
-        </div>
+    </section>
 
 
 
-        <!-- WAKTU -->
+    <!-- ================= SENSOR ================= -->
 
-        <div class="data-row">
-
-            <span>
-                WAKTU DITERIMA
-            </span>
-
-            <strong id="lastUpdate">
-                --
-            </strong>
-
-        </div>
+    <section class="sensor-grid">
 
 
+        <!-- SUHU -->
 
-        <!-- STATUS -->
+        <div class="sensor-card">
 
-        <div class="data-row">
+            <div class="sensor-top">
 
-            <span>
-                STATUS DATA
-            </span>
+                <div class="sensor-icon">
+                    🌡️
+                </div>
 
-            <strong id="dataStatus">
-                MENUNGGU DATA
-            </strong>
+                <span class="sensor-label">
+                    SUHU
+                </span>
+
+            </div>
+
+
+            <div class="sensor-value">
+
+                <span id="temperature">
+                    --
+                </span>
+
+                <small>
+                    °C
+                </small>
+
+            </div>
+
+
+            <p>
+                Suhu lingkungan
+            </p>
 
         </div>
 
 
-    </div>
+
+        <!-- RH -->
+
+        <div class="sensor-card">
+
+            <div class="sensor-top">
+
+                <div class="sensor-icon">
+                    💧
+                </div>
+
+                <span class="sensor-label">
+                    RH
+                </span>
+
+            </div>
 
 
-</section>
+            <div class="sensor-value">
+
+                <span id="humidity">
+                    --
+                </span>
+
+                <small>
+                    %
+                </small>
+
+            </div>
+
+
+            <p>
+                Kelembapan relatif
+            </p>
+
+        </div>
+
+
+
+        <!-- TEKANAN -->
+
+        <div class="sensor-card">
+
+            <div class="sensor-top">
+
+                <div class="sensor-icon">
+                    🌪️
+                </div>
+
+                <span class="sensor-label">
+                    TEKANAN
+                </span>
+
+            </div>
+
+
+            <div class="sensor-value">
+
+                <span id="pressure">
+                    --
+                </span>
+
+                <small>
+                    hPa
+                </small>
+
+            </div>
+
+
+            <p>
+                Tekanan udara
+            </p>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- ================= DATA LORA ================= -->
+
+    <section class="data-section">
+
+
+        <div class="section-title">
+
+            <div>
+
+                <p class="small-title">
+                    COMMUNICATION
+                </p>
+
+                <h3>
+                    Data LoRa
+                </h3>
+
+            </div>
+
+
+            <div class="live-indicator">
+
+                <span></span>
+
+                <strong id="liveText">
+                    LIVE
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="data-panel">
+
+
+            <div class="data-row">
+
+                <span>
+                    TOPIC
+                </span>
+
+                <strong>
+                    smartfarming/lora/data
+                </strong>
+
+            </div>
+
+
+            <div class="data-row">
+
+                <span>
+                    DATA TERAKHIR
+                </span>
+
+                <strong id="data">
+                    Menunggu data...
+                </strong>
+
+            </div>
+
+
+            <div class="data-row">
+
+                <span>
+                    WAKTU DITERIMA
+                </span>
+
+                <strong id="lastUpdate">
+                    --
+                </strong>
+
+            </div>
+
+
+            <div class="data-row">
+
+                <span>
+                    STATUS DATA
+                </span>
+
+                <strong id="dataStatus">
+                    MENUNGGU DATA
+                </strong>
+
+            </div>
+
+
+        </div>
+
+    </section>
 
 
 </main>
 
 
 
-<!-- =====================================================
-     FOOTER
-===================================================== -->
+<!-- ================= FOOTER ================= -->
 
 <footer>
 
@@ -402,7 +360,6 @@
 
 
 <script src="script.js"></script>
-
 
 </body>
 
