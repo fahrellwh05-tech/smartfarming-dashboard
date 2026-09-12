@@ -1,52 +1,51 @@
-// ==========================================
-// MQTT CONFIGURATION
-// ==========================================
+// =====================================================
+// SMART FARMING - MQTT REAL TIME DASHBOARD
+// =====================================================
 
+// MQTT WebSocket HiveMQ
 const broker = "wss://broker.hivemq.com:8884/mqtt";
 
+// Topic harus sama dengan ESP32
 const topic = "smartfarming/lora/data";
 
 
-// ==========================================
-// CONNECT MQTT
-// ==========================================
+// =====================================================
+// STATUS AWAL
+// =====================================================
+
+let lastDataTime = null;
+let lastData = "";
+
+
+// =====================================================
+// MQTT CONNECT
+// =====================================================
 
 const client = mqtt.connect(broker, {
 
     clientId:
         "SmartFarmingWeb_" +
-        Math.random()
-            .toString(16)
-            .substring(2),
+        Math.random().toString(16).substring(2),
 
     clean: true,
 
-    reconnectPeriod: 3000
+    reconnectPeriod: 3000,
+
+    connectTimeout: 10000
 });
 
 
-// ==========================================
-// MQTT CONNECTED
-// ==========================================
+// =====================================================
+// CONNECTED
+// =====================================================
 
-client.on("connect", () => {
+client.on("connect", function () {
 
-    console.log("MQTT CONNECTED");
+    console.log("MQTT Connected");
 
-    document.getElementById("mqttStatus")
-        .innerText = "ONLINE";
+    setMQTTStatus(true);
 
-    document.getElementById("connectionText")
-        .innerText = "Terhubung";
-
-    document.getElementById("statusDot")
-        .style.background = "#46e19c";
-
-    document.getElementById("statusDot")
-        .style.boxShadow = "0 0 12px #46e19c";
-
-
-    client.subscribe(topic, (error) => {
+    client.subscribe(topic, function (error) {
 
         if (error) {
 
@@ -69,32 +68,50 @@ client.on("connect", () => {
 });
 
 
-// ==========================================
-// MQTT DISCONNECTED
-// ==========================================
+// =====================================================
+// RECONNECT
+// =====================================================
 
-client.on("offline", () => {
+client.on("reconnect", function () {
 
-    document.getElementById("mqttStatus")
-        .innerText = "OFFLINE";
+    console.log("MQTT reconnecting...");
 
-    document.getElementById("connectionText")
-        .innerText = "Terputus";
-
-    document.getElementById("statusDot")
-        .style.background = "#ff5c5c";
-
-    document.getElementById("statusDot")
-        .style.boxShadow = "0 0 12px #ff5c5c";
+    setMQTTStatus(false);
 
 });
 
 
-// ==========================================
-// MQTT ERROR
-// ==========================================
+// =====================================================
+// OFFLINE
+// =====================================================
 
-client.on("error", (error) => {
+client.on("offline", function () {
+
+    console.log("MQTT offline");
+
+    setMQTTStatus(false);
+
+});
+
+
+// =====================================================
+// CLOSE
+// =====================================================
+
+client.on("close", function () {
+
+    console.log("MQTT connection closed");
+
+    setMQTTStatus(false);
+
+});
+
+
+// =====================================================
+// ERROR
+// =====================================================
+
+client.on("error", function (error) {
 
     console.error(
         "MQTT ERROR:",
@@ -104,88 +121,216 @@ client.on("error", (error) => {
 });
 
 
-// ==========================================
-// RECEIVE DATA
-// ==========================================
+// =====================================================
+// MQTT STATUS
+// =====================================================
 
-client.on("message", (receivedTopic, message) => {
+function setMQTTStatus(online) {
 
-    const data = message.toString().trim();
+    const mqttStatus =
+        document.getElementById("mqttStatus");
 
-    console.log(
-        "DATA DITERIMA:",
-        data
-    );
+    const connectionText =
+        document.getElementById("connectionText");
 
-
-    // Tampilkan data asli
-
-    document.getElementById("data")
-        .innerText = data;
+    const statusDot =
+        document.getElementById("statusDot");
 
 
-    // Waktu
+    if (online) {
 
-    const now = new Date();
+        if (mqttStatus) {
+            mqttStatus.innerText = "ONLINE";
+        }
 
-    document.getElementById("lastUpdate")
-        .innerText =
-        now.toLocaleTimeString("id-ID");
+        if (connectionText) {
+            connectionText.innerText = "Terhubung";
+        }
+
+        if (statusDot) {
+
+            statusDot.style.background =
+                "#46e19c";
+
+            statusDot.style.boxShadow =
+                "0 0 12px #46e19c";
+        }
+
+    } else {
+
+        if (mqttStatus) {
+            mqttStatus.innerText = "OFFLINE";
+        }
+
+        if (connectionText) {
+            connectionText.innerText = "Terputus";
+        }
+
+        if (statusDot) {
+
+            statusDot.style.background =
+                "#ff5c5c";
+
+            statusDot.style.boxShadow =
+                "0 0 12px #ff5c5c";
+        }
+
+    }
+
+}
 
 
-    // Coba membaca nilai sensor
+// =====================================================
+// RECEIVE MQTT DATA
+// =====================================================
 
-    parseSensorData(data);
+client.on(
+    "message",
+    function (receivedTopic, message) {
 
-});
+        // Pastikan topic benar
+        if (receivedTopic !== topic) {
+            return;
+        }
 
 
-// ==========================================
-// PARSE SENSOR DATA
-// ==========================================
+        const data =
+            message.toString().trim();
+
+
+        console.log(
+            "DATA DITERIMA:",
+            data
+        );
+
+
+        // =================================================
+        // CEGAH DATA YANG SAMA DIBACA SEBAGAI DATA BARU
+        // =================================================
+
+        if (data === lastData) {
+
+            console.log(
+                "Data sama, tidak dianggap update baru."
+            );
+
+            return;
+        }
+
+
+        lastData = data;
+
+
+        // =================================================
+        // WAKTU DATA MASUK
+        // =================================================
+
+        lastDataTime = new Date();
+
+
+        const timeString =
+            lastDataTime.toLocaleTimeString(
+                "id-ID"
+            );
+
+
+        // =================================================
+        // TAMPILKAN DATA TERAKHIR
+        // =================================================
+
+        const dataElement =
+            document.getElementById("data");
+
+        if (dataElement) {
+
+            dataElement.innerText =
+                data;
+        }
+
+
+        // =================================================
+        // TAMPILKAN WAKTU UPDATE
+        // =================================================
+
+        const lastUpdate =
+            document.getElementById(
+                "lastUpdate"
+            );
+
+        if (lastUpdate) {
+
+            lastUpdate.innerText =
+                timeString;
+        }
+
+
+        // =================================================
+        // PARSING DATA SENSOR
+        // =================================================
+
+        parseSensorData(data);
+
+
+        // =================================================
+        // UPDATE INDIKATOR LIVE
+        // =================================================
+
+        updateLiveIndicator();
+
+    }
+);
+
+
+// =====================================================
+// PARSE DATA SENSOR
+// =====================================================
+//
+// Contoh data:
+//
+// Suhu=31.58C, Tekanan=1010.94hPa, RH=62.47%
+//
+// atau:
+//
+// Soil=75, Suhu=31.5C, RH=62.4%, Pump=ON
+//
+// =====================================================
 
 function parseSensorData(data) {
 
+
+    // =================================================
+    // SOIL / KELEMBAPAN TANAH
+    // =================================================
+
     let soil = null;
 
-    let temperature = null;
-
-    let humidity = null;
-
-    let pump = null;
-
-
-    // ======================================
-    // SOIL MOISTURE
-    // Contoh:
-    // Soil: 75
-    // Soil Moisture: 75%
-    // Kelembapan: 75
-    // ======================================
 
     let soilMatch = data.match(
-        /(?:soil|soil moisture|kelembapan tanah)\s*[:=]\s*(\d+(?:\.\d+)?)/i
+        /(?:soil\s*moisture|soil|kelembapan\s*tanah)\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*%?/i
     );
+
 
     if (soilMatch) {
 
-        soil = parseFloat(
-            soilMatch[1]
-        );
+        soil =
+            parseFloat(
+                soilMatch[1]
+            );
 
     }
 
 
-    // ======================================
-    // TEMPERATURE
-    // Contoh:
-    // Temperature: 28.5
-    // Suhu: 28.5
-    // ======================================
+    // =================================================
+    // SUHU
+    // =================================================
+
+    let temperature = null;
+
 
     let tempMatch = data.match(
-        /(?:temperature|temp|suhu)\s*[:=]\s*(-?\d+(?:\.\d+)?)/i
+        /(?:suhu|temperature|temp)\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*(?:°?\s*C)?/i
     );
+
 
     if (tempMatch) {
 
@@ -197,16 +342,17 @@ function parseSensorData(data) {
     }
 
 
-    // ======================================
-    // HUMIDITY
-    // Contoh:
-    // Humidity: 70
-    // Kelembapan Udara: 70
-    // ======================================
+    // =================================================
+    // KELEMBAPAN UDARA
+    // =================================================
+
+    let humidity = null;
+
 
     let humidityMatch = data.match(
-        /(?:humidity|air humidity|kelembapan udara)\s*[:=]\s*(\d+(?:\.\d+)?)/i
+        /(?:RH|humidity|air\s*humidity|kelembapan\s*udara)\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*%?/i
     );
+
 
     if (humidityMatch) {
 
@@ -218,14 +364,37 @@ function parseSensorData(data) {
     }
 
 
-    // ======================================
-    // PUMP
-    // ======================================
+    // =================================================
+    // TEKANAN
+    // =================================================
+
+    let pressure = null;
+
+
+    let pressureMatch = data.match(
+        /(?:tekanan|pressure)\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*(?:hPa)?/i
+    );
+
+
+    if (pressureMatch) {
+
+        pressure =
+            parseFloat(
+                pressureMatch[1]
+            );
+
+    }
+
+
+    // =================================================
+    // POMPA
+    // =================================================
+
+    let pump = null;
+
 
     if (
-        /pump\s*[:=]\s*(on|1|nyala|aktif)/i.test(data)
-        ||
-        /pompa\s*[:=]\s*(on|1|nyala|aktif)/i.test(data)
+        /(?:pump|pompa)\s*[:=]\s*(?:ON|1|NYALA|AKTIF)/i.test(data)
     ) {
 
         pump = true;
@@ -234,9 +403,7 @@ function parseSensorData(data) {
 
 
     if (
-        /pump\s*[:=]\s*(off|0|mati|nonaktif)/i.test(data)
-        ||
-        /pompa\s*[:=]\s*(off|0|mati|nonaktif)/i.test(data)
+        /(?:pump|pompa)\s*[:=]\s*(?:OFF|0|MATI|NONAKTIF)/i.test(data)
     ) {
 
         pump = false;
@@ -244,9 +411,9 @@ function parseSensorData(data) {
     }
 
 
-    // ======================================
-    // UPDATE DISPLAY
-    // ======================================
+    // =================================================
+    // UPDATE SOIL
+    // =================================================
 
     if (soil !== null) {
 
@@ -255,23 +422,74 @@ function parseSensorData(data) {
     }
 
 
+    // =================================================
+    // UPDATE SUHU
+    // =================================================
+
     if (temperature !== null) {
 
-        document.getElementById("temperature")
-            .innerText =
-            temperature.toFixed(1);
+        const element =
+            document.getElementById(
+                "temperature"
+            );
+
+
+        if (element) {
+
+            element.innerText =
+                temperature.toFixed(2);
+
+        }
 
     }
 
+
+    // =================================================
+    // UPDATE HUMIDITY
+    // =================================================
 
     if (humidity !== null) {
 
-        document.getElementById("humidity")
-            .innerText =
-            humidity.toFixed(1);
+        const element =
+            document.getElementById(
+                "humidity"
+            );
+
+
+        if (element) {
+
+            element.innerText =
+                humidity.toFixed(2);
+
+        }
 
     }
 
+
+    // =================================================
+    // UPDATE TEKANAN
+    // =================================================
+
+    const pressureElement =
+        document.getElementById(
+            "pressure"
+        );
+
+
+    if (
+        pressureElement &&
+        pressure !== null
+    ) {
+
+        pressureElement.innerText =
+            pressure.toFixed(2);
+
+    }
+
+
+    // =================================================
+    // UPDATE POMPA
+    // =================================================
 
     if (pump !== null) {
 
@@ -279,35 +497,79 @@ function parseSensorData(data) {
 
     }
 
+
+    // =================================================
+    // DEBUG
+    // =================================================
+
+    console.log(
+        "HASIL PARSING:",
+        {
+            soil: soil,
+            temperature: temperature,
+            humidity: humidity,
+            pressure: pressure,
+            pump: pump
+        }
+    );
+
 }
 
 
-// ==========================================
+// =====================================================
 // UPDATE SOIL
-// ==========================================
+// =====================================================
 
 function updateSoil(value) {
 
-    value = Math.max(
-        0,
-        Math.min(100, value)
-    );
+
+    value =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                value
+            )
+        );
 
 
-    document.getElementById("soil")
-        .innerText =
-        value.toFixed(0);
+    const soil =
+        document.getElementById(
+            "soil"
+        );
 
 
-    document.getElementById("soilBar")
-        .style.width =
-        value + "%";
+    if (soil) {
+
+        soil.innerText =
+            value.toFixed(0);
+
+    }
 
 
-    let status =
+    const soilBar =
+        document.getElementById(
+            "soilBar"
+        );
+
+
+    if (soilBar) {
+
+        soilBar.style.width =
+            value + "%";
+
+    }
+
+
+    const status =
         document.getElementById(
             "soilStatus"
         );
+
+
+    if (!status) {
+        return;
+    }
 
 
     if (value < 30) {
@@ -341,16 +603,18 @@ function updateSoil(value) {
 }
 
 
-// ==========================================
-// UPDATE PUMP
-// ==========================================
+// =====================================================
+// UPDATE POMPA
+// =====================================================
 
 function updatePump(isOn) {
+
 
     const pump =
         document.getElementById(
             "pumpStatus"
         );
+
 
     const description =
         document.getElementById(
@@ -358,30 +622,171 @@ function updatePump(isOn) {
         );
 
 
+    if (!pump) {
+        return;
+    }
+
+
     if (isOn) {
 
-        pump.innerText = "ON";
+        pump.innerText =
+            "ON";
 
-        pump.classList.remove("off");
 
-        pump.classList.add("on");
+        pump.classList.remove(
+            "off"
+        );
 
-        description.innerText =
-            "Pompa sedang menyiram";
+
+        pump.classList.add(
+            "on"
+        );
+
+
+        if (description) {
+
+            description.innerText =
+                "Pompa sedang menyiram";
+
+        }
 
     }
 
     else {
 
-        pump.innerText = "OFF";
+        pump.innerText =
+            "OFF";
 
-        pump.classList.remove("on");
 
-        pump.classList.add("off");
+        pump.classList.remove(
+            "on"
+        );
 
-        description.innerText =
-            "Pompa tidak aktif";
+
+        pump.classList.add(
+            "off"
+        );
+
+
+        if (description) {
+
+            description.innerText =
+                "Pompa tidak aktif";
+
+        }
 
     }
 
 }
+
+
+// =====================================================
+// LIVE INDICATOR
+// =====================================================
+
+function updateLiveIndicator() {
+
+
+    const liveElement =
+        document.querySelector(
+            ".live"
+        );
+
+
+    if (!liveElement) {
+        return;
+    }
+
+
+    liveElement.innerText =
+        "● LIVE";
+
+
+    liveElement.style.opacity =
+        "1";
+
+}
+
+
+// =====================================================
+// CEK DATA TERAKHIR SETIAP 1 DETIK
+// =====================================================
+
+setInterval(function () {
+
+
+    if (!lastDataTime) {
+        return;
+    }
+
+
+    const now =
+        new Date();
+
+
+    const difference =
+        Math.floor(
+            (
+                now -
+                lastDataTime
+            ) / 1000
+        );
+
+
+    const liveElement =
+        document.querySelector(
+            ".live"
+        );
+
+
+    if (!liveElement) {
+        return;
+    }
+
+
+    // =================================================
+    // DATA MASIH BARU
+    // =================================================
+
+    if (difference <= 5) {
+
+        liveElement.innerText =
+            "● LIVE";
+
+        liveElement.style.opacity =
+            "1";
+
+    }
+
+
+    // =================================================
+    // DATA TERLAMBAT
+    // =================================================
+
+    else if (difference <= 15) {
+
+        liveElement.innerText =
+            "● DELAY";
+
+        liveElement.style.opacity =
+            "0.7";
+
+    }
+
+
+    // =================================================
+    // DATA SUDAH LAMA
+    // =================================================
+
+    else {
+
+        liveElement.innerText =
+            "● NO DATA";
+
+        liveElement.style.opacity =
+            "0.5";
+
+    }
+
+
+}, 1000);
