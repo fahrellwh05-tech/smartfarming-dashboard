@@ -1,5 +1,5 @@
 // =====================================================
-// SMART FARMING - MQTT REAL TIME
+// MQTT CONFIG
 // =====================================================
 
 const broker =
@@ -20,7 +20,6 @@ let lastDataTime = null;
 const client = mqtt.connect(
     broker,
     {
-
         clientId:
             "SmartFarmingWeb_" +
             Math.random()
@@ -32,171 +31,120 @@ const client = mqtt.connect(
         reconnectPeriod: 3000,
 
         connectTimeout: 10000
+    }
+);
+
+
+// =====================================================
+// CONNECT
+// =====================================================
+
+client.on(
+    "connect",
+    function () {
+
+        console.log(
+            "MQTT Connected"
+        );
+
+
+        document.getElementById(
+            "mqttStatus"
+        ).innerText =
+            "ONLINE";
+
+
+        document.getElementById(
+            "connectionText"
+        ).innerText =
+            "Terhubung";
+
+
+        const dot =
+            document.getElementById(
+                "statusDot"
+            );
+
+
+        dot.style.background =
+            "#39e8ae";
+
+
+        dot.style.boxShadow =
+            "0 0 12px #39e8ae";
+
+
+        client.subscribe(
+            topic,
+            function (error) {
+
+                if (error) {
+
+                    console.error(
+                        "Subscribe gagal:",
+                        error
+                    );
+
+                }
+
+                else {
+
+                    console.log(
+                        "Subscribe berhasil:",
+                        topic
+                    );
+
+                }
+
+            }
+        );
 
     }
 );
 
 
 // =====================================================
-// CONNECTED
-// =====================================================
-
-client.on("connect", function () {
-
-    console.log(
-        "MQTT Connected"
-    );
-
-
-    setMQTTStatus(true);
-
-
-    client.subscribe(
-        topic,
-        function (error) {
-
-            if (error) {
-
-                console.error(
-                    "Subscribe gagal:",
-                    error
-                );
-
-            }
-
-            else {
-
-                console.log(
-                    "Subscribe berhasil:",
-                    topic
-                );
-
-            }
-
-        }
-    );
-
-});
-
-
-// =====================================================
-// RECONNECT
-// =====================================================
-
-client.on("reconnect", function () {
-
-    console.log(
-        "MQTT reconnecting..."
-    );
-
-    setMQTTStatus(false);
-
-});
-
-
-// =====================================================
 // OFFLINE
 // =====================================================
 
-client.on("offline", function () {
+client.on(
+    "offline",
+    function () {
 
-    console.log(
-        "MQTT offline"
-    );
-
-    setMQTTStatus(false);
-
-});
+        document.getElementById(
+            "mqttStatus"
+        ).innerText =
+            "OFFLINE";
 
 
-// =====================================================
-// CLOSE
-// =====================================================
+        document.getElementById(
+            "connectionText"
+        ).innerText =
+            "Terputus";
 
-client.on("close", function () {
-
-    console.log(
-        "MQTT connection closed"
-    );
-
-    setMQTTStatus(false);
-
-});
+    }
+);
 
 
 // =====================================================
 // ERROR
 // =====================================================
 
-client.on("error", function (error) {
+client.on(
+    "error",
+    function (error) {
 
-    console.error(
-        "MQTT ERROR:",
-        error
-    );
-
-});
-
-
-// =====================================================
-// MQTT STATUS
-// =====================================================
-
-function setMQTTStatus(online) {
-
-    const mqttStatus =
-        document.getElementById(
-            "mqttStatus"
+        console.error(
+            "MQTT ERROR:",
+            error
         );
-
-    const connectionText =
-        document.getElementById(
-            "connectionText"
-        );
-
-    const statusDot =
-        document.getElementById(
-            "statusDot"
-        );
-
-
-    if (online) {
-
-        mqttStatus.innerText =
-            "ONLINE";
-
-        connectionText.innerText =
-            "Terhubung";
-
-        statusDot.style.background =
-            "#46e19c";
-
-        statusDot.style.boxShadow =
-            "0 0 12px #46e19c";
 
     }
-
-    else {
-
-        mqttStatus.innerText =
-            "OFFLINE";
-
-        connectionText.innerText =
-            "Terputus";
-
-        statusDot.style.background =
-            "#ff5c5c";
-
-        statusDot.style.boxShadow =
-            "0 0 12px #ff5c5c";
-
-    }
-
-}
+);
 
 
 // =====================================================
-// TERIMA DATA MQTT
+// RECEIVE DATA
 // =====================================================
 
 client.on(
@@ -207,8 +155,6 @@ client.on(
     ) {
 
 
-        // Pastikan topic sesuai
-
         if (
             receivedTopic !== topic
         ) {
@@ -217,8 +163,6 @@ client.on(
 
         }
 
-
-        // Ambil data
 
         const data =
             message
@@ -232,317 +176,143 @@ client.on(
         );
 
 
-        // =================================================
-        // JIKA DATA SAMA
-        // =================================================
-
-        if (
-            data === lastData
-        ) {
-
-            console.log(
-                "Data sama - tidak ada perubahan."
-            );
-
-            return;
-
-        }
-
-
-        // Simpan data terbaru
+        // Simpan data terakhir
 
         lastData =
             data;
 
 
-        // Waktu data benar-benar diterima
+        // Waktu data diterima
 
         lastDataTime =
             new Date();
 
 
         // =================================================
-        // TAMPILKAN DATA
+        // TAMPILKAN DATA MENTAH
         // =================================================
 
-        const dataElement =
-            document.getElementById(
-                "data"
-            );
+        document.getElementById(
+            "data"
+        ).innerText =
+            data;
 
 
-        if (dataElement) {
-
-            dataElement.innerText =
-                data;
-
-        }
-
-
-        // =================================================
-        // WAKTU
-        // =================================================
-
-        const lastUpdate =
-            document.getElementById(
-                "lastUpdate"
-            );
+        document.getElementById(
+            "lastUpdate"
+        ).innerText =
+            lastDataTime
+                .toLocaleTimeString(
+                    "id-ID"
+                );
 
 
-        if (lastUpdate) {
-
-            lastUpdate.innerText =
-                lastDataTime
-                    .toLocaleTimeString(
-                        "id-ID"
-                    );
-
-        }
+        document.getElementById(
+            "dataStatus"
+        ).innerText =
+            "DATA REAL-TIME";
 
 
         // =================================================
-        // STATUS DATA
+        // BACA DATA
         // =================================================
 
-        const dataStatus =
-            document.getElementById(
-                "dataStatus"
-            );
-
-
-        if (dataStatus) {
-
-            dataStatus.innerText =
-                "DATA BARU DITERIMA";
-
-        }
-
-
-        // =================================================
-        // PARSING SENSOR
-        // =================================================
-
-        parseSensorData(
-            data
-        );
-
-
-        // =================================================
-        // LIVE
-        // =================================================
-
-        updateLiveIndicator();
+        parseData(data);
 
     }
 );
 
 
 // =====================================================
-// PARSING SENSOR
+// PARSE DATA
 // =====================================================
 
-function parseSensorData(
-    data
-) {
+function parseData(data) {
 
 
-    let soil = null;
-
-    let temperature = null;
-
-    let humidity = null;
-
-    let pressure = null;
-
-    let pump = null;
-
-
-
-    // =================================================
-    // SOIL
-    // =================================================
-
-    const soilMatch =
-        data.match(
-            /(?:soil\s*moisture|soil|kelembapan\s*tanah)\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*%?/i
-        );
-
-
-    if (soilMatch) {
-
-        soil =
-            parseFloat(
-                soilMatch[1]
-            );
-
-    }
-
-
-
-    // =================================================
+    // ============================
     // SUHU
-    // =================================================
+    // ============================
 
-    const tempMatch =
+    const suhu =
         data.match(
-            /(?:suhu|temperature|temp)\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*(?:°?\s*C)?/i
+            /Suhu\s*=\s*(-?\d+(?:\.\d+)?)\s*C/i
         );
 
 
-    if (tempMatch) {
+    if (suhu) {
 
-        temperature =
+        document.getElementById(
+            "temperature"
+        ).innerText =
             parseFloat(
-                tempMatch[1]
-            );
+                suhu[1]
+            ).toFixed(2);
 
     }
 
 
-
-    // =================================================
-    // RH
-    // =================================================
-
-    const humidityMatch =
-        data.match(
-            /(?:RH|humidity|air\s*humidity|kelembapan\s*udara)\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*%?/i
-        );
-
-
-    if (humidityMatch) {
-
-        humidity =
-            parseFloat(
-                humidityMatch[1]
-            );
-
-    }
-
-
-
-    // =================================================
+    // ============================
     // TEKANAN
-    // =================================================
+    // ============================
 
-    const pressureMatch =
+    const tekanan =
         data.match(
-            /(?:tekanan|pressure)\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*(?:hPa)?/i
+            /Tekanan\s*=\s*(-?\d+(?:\.\d+)?)\s*hPa/i
         );
 
 
-    if (pressureMatch) {
+    if (tekanan) {
 
-        pressure =
+        document.getElementById(
+            "pressure"
+        ).innerText =
             parseFloat(
-                pressureMatch[1]
-            );
+                tekanan[1]
+            ).toFixed(2);
 
     }
 
 
+    // ============================
+    // RH
+    // ============================
 
-    // =================================================
-    // POMPA
-    // =================================================
-
-    if (
-        /(?:pump|pompa)\s*[:=]\s*(?:ON|1|NYALA|AKTIF)/i
-            .test(data)
-    ) {
-
-        pump = true;
-
-    }
-
-
-    if (
-        /(?:pump|pompa)\s*[:=]\s*(?:OFF|0|MATI|NONAKTIF)/i
-            .test(data)
-    ) {
-
-        pump = false;
-
-    }
-
-
-
-    // =================================================
-    // UPDATE DISPLAY
-    // =================================================
-
-    if (
-        soil !== null
-    ) {
-
-        updateSoil(
-            soil
+    const rh =
+        data.match(
+            /RH\s*=\s*(-?\d+(?:\.\d+)?)\s*%/i
         );
 
-    }
 
+    if (rh) {
 
-    if (
-        temperature !== null
-    ) {
-
-        document
-            .getElementById(
-                "temperature"
-            )
-            .innerText =
-            temperature.toFixed(2);
-
-    }
-
-
-    if (
-        humidity !== null
-    ) {
-
-        document
-            .getElementById(
-                "humidity"
-            )
-            .innerText =
-            humidity.toFixed(2);
-
-    }
-
-
-    if (
-        pressure !== null
-    ) {
-
-        document
-            .getElementById(
-                "pressure"
-            )
-            .innerText =
-            pressure.toFixed(2);
-
-    }
-
-
-    if (
-        pump !== null
-    ) {
-
-        updatePump(
-            pump
-        );
+        document.getElementById(
+            "humidity"
+        ).innerText =
+            parseFloat(
+                rh[1]
+            ).toFixed(2);
 
     }
 
 
     console.log(
-        "HASIL PARSING:",
+        "HASIL:",
         {
-            soil,
-            temperature,
-            humidity,
-            pressure,
-            pump
+            suhu:
+                suhu
+                    ? suhu[1]
+                    : null,
+
+            tekanan:
+                tekanan
+                    ? tekanan[1]
+                    : null,
+
+            RH:
+                rh
+                    ? rh[1]
+                    : null
         }
     );
 
@@ -550,165 +320,7 @@ function parseSensorData(
 
 
 // =====================================================
-// SOIL
-// =====================================================
-
-function updateSoil(
-    value
-) {
-
-    value =
-        Math.max(
-            0,
-            Math.min(
-                100,
-                value
-            )
-        );
-
-
-    document
-        .getElementById(
-            "soil"
-        )
-        .innerText =
-        value.toFixed(0);
-
-
-    document
-        .getElementById(
-            "soilBar"
-        )
-        .style.width =
-        value + "%";
-
-
-    const status =
-        document.getElementById(
-            "soilStatus"
-        );
-
-
-    if (
-        value < 30
-    ) {
-
-        status.innerText =
-            "Tanah sangat kering";
-
-    }
-
-    else if (
-        value < 60
-    ) {
-
-        status.innerText =
-            "Tanah cukup kering";
-
-    }
-
-    else if (
-        value < 80
-    ) {
-
-        status.innerText =
-            "Kelembapan normal";
-
-    }
-
-    else {
-
-        status.innerText =
-            "Tanah sangat lembap";
-
-    }
-
-}
-
-
-// =====================================================
-// POMPA
-// =====================================================
-
-function updatePump(
-    isOn
-) {
-
-    const pump =
-        document.getElementById(
-            "pumpStatus"
-        );
-
-
-    const description =
-        document.getElementById(
-            "pumpDescription"
-        );
-
-
-    if (isOn) {
-
-        pump.innerText =
-            "ON";
-
-        pump.classList.remove(
-            "off"
-        );
-
-        pump.classList.add(
-            "on"
-        );
-
-        description.innerText =
-            "Pompa sedang menyiram";
-
-    }
-
-    else {
-
-        pump.innerText =
-            "OFF";
-
-        pump.classList.remove(
-            "on"
-        );
-
-        pump.classList.add(
-            "off"
-        );
-
-        description.innerText =
-            "Pompa tidak aktif";
-
-    }
-
-}
-
-
-// =====================================================
-// LIVE INDICATOR
-// =====================================================
-
-function updateLiveIndicator() {
-
-    const liveText =
-        document.getElementById(
-            "liveText"
-        );
-
-
-    if (liveText) {
-
-        liveText.innerText =
-            "LIVE";
-
-    }
-
-}
-
-
-// =====================================================
-// CEK UMUR DATA
+// CEK REAL-TIME
 // =====================================================
 
 setInterval(
@@ -724,14 +336,10 @@ setInterval(
         }
 
 
-        const now =
-            new Date();
-
-
         const seconds =
             Math.floor(
                 (
-                    now -
+                    new Date() -
                     lastDataTime
                 ) / 1000
             );
