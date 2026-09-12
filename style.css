@@ -6,7 +6,734 @@
 
 body {
     font-family: Arial, Helvetica, sans-serif;
+/* =====================================================
+   SMART FARMING DASHBOARD
+===================================================== */
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            #06383b,
+            #061b1c 45%,
+            #041112
+        );
+
+    color: white;
+
+    min-height: 100vh;
+
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+header {
+
+    height: 90px;
+
+    padding:
+        0 60px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    border-bottom:
+        1px solid
+        rgba(50, 220, 180, 0.18);
+
+}
+
+
+.logo {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+}
+
+
+.logo-icon {
+
+    width: 52px;
+
+    height: 52px;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 27px;
+
+    background:
+        rgba(50, 220, 180, 0.16);
+
+}
+
+
+.logo h1 {
+
+    font-size: 22px;
+
+    letter-spacing: 1px;
+
+}
+
+
+.logo p {
+
+    margin-top: 4px;
+
+    font-size: 13px;
+
+    color: #72b8c0;
+
+}
+
+
+.mqtt-status {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding:
+        12px 20px;
+
+    border-radius: 30px;
+
+    background:
+        rgba(20, 80, 80, 0.25);
+
+    border:
+        1px solid
+        rgba(60, 220, 190, 0.22);
+
+}
+
+
+#statusDot {
+
+    width: 12px;
+
+    height: 12px;
+
+    border-radius: 50%;
+
+    background: #777;
+
+}
+
+
+.mqtt-status strong {
+
+    display: block;
+
+    font-size: 14px;
+
+}
+
+
+.mqtt-status small {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #72aeb5;
+
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+main {
+
+    max-width: 1500px;
+
+    margin: auto;
+
+    padding:
+        45px 60px 50px;
+
+}
+
+
+/* =====================================================
+   WELCOME
+===================================================== */
+
+.welcome {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 40px;
+
+    margin-bottom: 35px;
+
+}
+
+
+.small-title {
+
+    color: #25e5ae;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.welcome h2 {
+
+    font-size: 45px;
+
+    line-height: 1.1;
+
+}
+
+
+.welcome h2 span {
+
+    color: #25e5ae;
+
+}
+
+
+.description {
+
+    margin-top: 15px;
+
+    color: #70b5bd;
+
+    max-width: 600px;
+
+    line-height: 1.6;
+
+}
+
+
+.connection-card {
+
+    min-width: 310px;
+
+    padding: 20px 25px;
+
+    border-radius: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    background:
+        rgba(10, 80, 85, 0.24);
+
+    border:
+        1px solid
+        rgba(50, 220, 190, 0.2);
+
+}
+
+
+.connection-icon {
+
+    width: 55px;
+
+    height: 55px;
+
+    border-radius: 15px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 26px;
+
+    background:
+        rgba(30, 220, 170, 0.14);
+
+}
+
+
+.connection-card span {
+
+    display: block;
+
+    color: #73b6bd;
+
+    font-size: 14px;
+
+    margin-bottom: 5px;
+
+}
+
+
+.connection-card strong {
+
+    font-size: 17px;
+
+}
+
+
+/* =====================================================
+   SENSOR
+===================================================== */
+
+.sensor-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+
+}
+
+
+.sensor-card {
+
+    min-height: 210px;
+
+    padding: 28px 32px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(24, 48, 49, 0.88),
+            rgba(9, 28, 29, 0.92)
+        );
+
+    border:
+        1px solid
+        rgba(130, 180, 180, 0.18);
+
+    transition:
+        0.25s;
+
+}
+
+
+.sensor-card:hover {
+
+    border-color:
+        rgba(40, 225, 180, 0.55);
+
+    transform:
+        translateY(-3px);
+
+}
+
+
+.sensor-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+
+.sensor-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 24px;
+
+    background:
+        rgba(70, 100, 100, 0.28);
+
+}
+
+
+.sensor-label {
+
+    color: #74b1b8;
+
+    font-size: 12px;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+.sensor-value {
+
+    display: flex;
+
+    align-items: baseline;
+
+    gap: 8px;
+
+    margin-top: 25px;
+
+}
+
+
+.sensor-value span {
+
+    font-size: 42px;
+
+    font-weight: bold;
+
+}
+
+
+.sensor-value small {
+
+    color: #8bb8bd;
+
+    font-size: 16px;
+
+}
+
+
+.sensor-card p {
+
+    margin-top: 15px;
+
+    color: #6ca8b0;
+
+    font-size: 13px;
+
+}
+
+
+/* =====================================================
+   DATA LORA
+===================================================== */
+
+.data-section {
+
+    margin-top: 38px;
+
+}
+
+
+.section-title {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: end;
+
+    margin-bottom: 16px;
+
+}
+
+
+.section-title h3 {
+
+    font-size: 29px;
+
+}
+
+
+.live-indicator {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #39e8ae;
+
+    font-size: 13px;
+
+}
+
+
+.live-indicator span {
+
+    width: 9px;
+
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: #39e8ae;
+
+    box-shadow:
+        0 0 12px
+        #39e8ae;
+
+}
+
+
+/* =====================================================
+   DATA PANEL
+===================================================== */
+
+.data-panel {
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    background:
+        rgba(10, 40, 42, 0.72);
+
+    border:
+        1px solid
+        rgba(40, 210, 180, 0.18);
+
+}
+
+
+.data-row {
+
+    min-height: 50px;
+
+    padding:
+        0 28px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    border-bottom:
+        1px solid
+        rgba(100, 160, 160, 0.1);
+
+}
+
+
+.data-row:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.data-row span {
+
+    color: #66a7ae;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+
+}
+
+
+.data-row strong {
+
+    font-size: 13px;
+
+    text-align: right;
+
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+footer {
+
+    padding:
+        20px 60px;
+
+    border-top:
+        1px solid
+        rgba(50, 220, 180, 0.15);
+
+    display: flex;
+
+    justify-content: space-between;
+
+    color: #63a8af;
+
+    font-size: 13px;
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (
+    max-width: 900px
+) {
+
+    header {
+
+        padding:
+            0 25px;
+
+    }
+
+
+    main {
+
+        padding:
+            30px 25px;
+
+    }
+
+
+    .welcome {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    .connection-card {
+
+        width: 100%;
+
+    }
+
+
+    .sensor-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .welcome h2 {
+
+        font-size: 35px;
+
+    }
+
+
+    footer {
+
+        padding:
+            20px 25px;
+
+        flex-direction: column;
+
+        gap: 8px;
+
+    }
+
+}
+
+
+@media (
+    max-width: 600px
+) {
+
+    .logo h1 {
+
+        font-size: 17px;
+
+    }
+
+
+    .logo p {
+
+        font-size: 11px;
+
+    }
+
+
+    .mqtt-status {
+
+        padding:
+            9px 12px;
+
+    }
+
+
+    .mqtt-status small {
+
+        display: none;
+
+    }
+
+
+    .data-row {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        padding:
+            14px 20px;
+
+        gap: 6px;
+
+    }
+
+
+    .data-row strong {
+
+        text-align: left;
+
+    }
+
+}
     background:
         radial-gradient(
             circle at top right,
