@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Farming Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+
+        <div class="logo">
+            <div class="logo-icon">🌱</div>
+
+            <div>
+                <h1>SMART FARMING</h1>
+                <p>IoT Monitoring System</p>
+            </div>
+        </div>
+
+        <div class="mqtt-status">
+            <span id="statusDot"></span>
+
+            <div>
+                <strong id="mqttStatus">CONNECTING</strong>
+                <small>MQTT Broker</small>
+            </div>
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main>
+
+        <!-- WELCOME -->
+        <section class="welcome">
+
+            <div>
+                <p class="small-title">SMART AGRICULTURE</p>
+
+                <h2>
+                    Monitoring Tanaman
+                    <span>Real-Time</span>
+                </h2>
+
+                <p class="description">
+                    Pantau kondisi lahan dan sistem irigasi
+                    secara langsung melalui koneksi LoRa dan MQTT.
+                </p>
+            </div>
+
+            <div class="connection-card">
+
+                <div class="connection-icon">
+                    📡
+                </div>
+
+                <div>
+                    <span>Koneksi Sistem</span>
+                    <strong id="connectionText">
+                        Menghubungkan...
+                    </strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SENSOR CARDS -->
+        <section class="sensor-grid">
+
+            <!-- SOIL -->
+            <div class="sensor-card">
+
+                <div class="sensor-top">
+                    <div class="sensor-icon soil">
+                        💧
+                    </div>
+
+                    <span class="sensor-label">
+                        SOIL MOISTURE
+                    </span>
+                </div>
+
+                <div class="sensor-value">
+                    <span id="soil">--</span>
+                    <small>%</small>
+                </div>
+
+                <div class="progress">
+                    <div id="soilBar"></div>
+                </div>
+
+                <p id="soilStatus">
+                    Menunggu data...
+                </p>
+
+            </div>
+
+
+            <!-- TEMPERATURE -->
+            <div class="sensor-card">
+
+                <div class="sensor-top">
+
+                    <div class="sensor-icon temperature">
+                        🌡️
+                    </div>
+
+                    <span class="sensor-label">
+                        TEMPERATURE
+                    </span>
+
+                </div>
+
+                <div class="sensor-value">
+
+                    <span id="temperature">
+                        --
+                    </span>
+
+                    <small>°C</small>
+
+                </div>
+
+                <p class="sensor-info">
+                    Suhu lingkungan
+                </p>
+
+            </div>
+
+
+            <!-- HUMIDITY -->
+            <div class="sensor-card">
+
+                <div class="sensor-top">
+
+                    <div class="sensor-icon humidity">
+                        💦
+                    </div>
+
+                    <span class="sensor-label">
+                        AIR HUMIDITY
+                    </span>
+
+                </div>
+
+                <div class="sensor-value">
+
+                    <span id="humidity">
+                        --
+                    </span>
+
+                    <small>%</small>
+
+                </div>
+
+                <p class="sensor-info">
+                    Kelembapan udara
+                </p>
+
+            </div>
+
+
+            <!-- PUMP -->
+            <div class="sensor-card pump-card">
+
+                <div class="sensor-top">
+
+                    <div class="sensor-icon pump">
+                        🚰
+                    </div>
+
+                    <span class="sensor-label">
+                        WATER PUMP
+                    </span>
+
+                </div>
+
+                <div
+                    id="pumpStatus"
+                    class="pump-status off"
+                >
+                    OFF
+                </div>
+
+                <p id="pumpDescription">
+                    Pompa tidak aktif
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- DATA PANEL -->
+        <section class="data-section">
+
+            <div class="section-title">
+
+                <div>
+                    <p class="small-title">
+                        COMMUNICATION
+                    </p>
+
+                    <h3>
+                        Data LoRa
+                    </h3>
+                </div>
+
+                <div class="live-indicator">
+                    <span></span>
+                    LIVE
+                </div>
+
+            </div>
+
+
+            <div class="data-panel">
+
+                <div class="data-row">
+
+                    <span>TOPIC</span>
+
+                    <strong>
+                        smartfarming/lora/data
+                    </strong>
+
+                </div>
+
+
+                <div class="data-row">
+
+                    <span>DATA TERAKHIR</span>
+
+                    <strong id="data">
+                        Menunggu data dari ESP32...
+                    </strong>
+
+                </div>
+
+
+                <div class="data-row">
+
+                    <span>WAKTU DITERIMA</span>
+
+                    <strong id="lastUpdate">
+                        --
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <span>
+            🌱 Smart Farming IoT
+        </span>
+
+        <span>
+            LoRa • ESP32 • MQTT
+        </span>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
